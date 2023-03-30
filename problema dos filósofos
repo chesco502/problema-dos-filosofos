@@ -3,7 +3,10 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include <unistd.h>
-
+//41783174 - Rodrigo Rios
+//32271697 - Francesco Coppola
+//32162871 - Matheus Duarte
+// a comunicaçao entre as threads vem do vetor de semaforos garfo
 #define N 5 // número de filósofos
 #define LEFT (i+N-1)%N // índice do vizinho da esquerda
 #define RIGHT (i+1)%N // índice do vizinho da direita
