@@ -1,0 +1,55 @@
+#include <stdio.h>
+
+#include <stdlib.h>
+
+#include <pthread.h>
+
+#include <semaphore.h>
+
+#include <unistd.h>
+
+// grupo: 32271697 Francesco Z Coppola\ Matheus Duarte\ 41783174- rodrigo Rios
+
+#define N 5 // número de filósofos
+
+#define LEFT (i+N-1)%N // índice do vizinho da esquerda
+
+#define RIGHT (i+1)%N // índice do vizinho da direita
+
+
+
+pthread_t filosofo[N]; // threads para cada filósofo
+
+sem_t garfo[N]; // semáforos para cada garfo    <---- utilizando semafaros podemos saber se o garfo esta sendo usado 
+
+sem_t mutex; // semáforo para exclusão mútua
+
+
+
+void *jantar(void *arg) {
+
+    int i = *(int *) arg;
+
+    while (1) {
+
+        printf("Filósofo %d esta pensando...\n", i);
+
+        sleep(rand()%5); // filósofo pensando
+
+        sem_wait(&mutex); // entrada na região crítica
+
+        sem_wait(&garfo[LEFT]); // pega garfo da esquerda <---- espera para a liberaçao do garfo a esquerda(sabe quando garfo esta livre pela utilizaçao de semaforo)
+
+        sem_wait(&garfo[RIGHT]); // pega garfo da direita <----- espera para a liberaçao do garfo a direita (sabe quando garfo esta livre pela utilizaçao de semaforo)
+
+        printf("Filósofo %d esta comendo...\n", i);     // quando os dois estao livres come 
+
+        sleep(rand()%5); // filósofo comendo
+
+        sem_post(&garfo[RIGHT]); // solta garfo da direita <------- muda o semaforo de direita para livre 
+
+        sem_post(&garfo[LEFT]); // solta garfo da esquerda<------- muda o semaforo de esquerda para livre 
+
+        sem_post(&mutex); // saída da região crítica
+
+    }
